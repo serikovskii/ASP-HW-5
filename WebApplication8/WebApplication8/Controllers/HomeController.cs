@@ -17,24 +17,28 @@ namespace WebApplication8.Controllers
         }
 
         [HttpPost]
-        public ActionResult ProcessData(string nik, string text)
+        public ActionResult ProcessData(Post model)
         {
             using(var context = new Context())
             {
-                var post = new List<Post> 
+                if(model.Text == null && model.Nik == null)
                 {
-                    new Post
+                    return Json(context.Posts.ToList(), JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var post = new List<Post>
                     {
-                        Text = text,
-                        Nik = nik
-                    }
-                    
-                };
-                
-                context.Posts.AddRange(post);
-                context.SaveChanges();
-
-                return Json(context.Posts.ToList(), JsonRequestBehavior.AllowGet);
+                        new Post
+                        {
+                            Text = model.Text,
+                            Nik = model.Nik
+                        }
+                    };
+                    context.Posts.AddRange(post);
+                    context.SaveChanges();
+                    return Json(context.Posts.ToList(), JsonRequestBehavior.AllowGet);
+                }
             }
 
         }
